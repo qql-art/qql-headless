@@ -9,6 +9,8 @@
   "author": "",
   "license": "UNLICENSED",
   "dependencies": {
+    "canvas": "^2.10.1",
+    "jsdom": "^20.0.1",
     "p5": "1.2.0"
   }
 }
