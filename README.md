@@ -11,7 +11,7 @@ This repository has two main goodies:
 
     ```
     $ mkdir /tmp/myqqls
-    $ node src/index.js /tmp/myqqls 0xd56707860b0cc2c6be60c3befaaed757c69095f76d4758391c4efa549adb66ff
+    $ node src/index.js /tmp/myqqls 0x33c9371d25ce44a408f8a6473fbad86bf81e1a178c012cd49a85ffff14c54b46
     $ node src/index.js /tmp/myqqls  # render a random seed
     ```
 
