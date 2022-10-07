@@ -1,0 +1,15 @@
+This repository contains the QQL algorithm, as well as code that interfaces
+with that algorithm to render QQLs and write them to disk.
+
+The QQL algorithm is copyright 2022 by Tyler Hobbs and Dandelion Wist Mané.
+It is not permissively licensed. Specifically, all rights are reserved for the
+following files:
+
+    src/vendor/qql.min.js
+    src/vendor/qql-traits.min.js
+
+The interfacing code in this repository, not including the QQL algorithm
+itself, is released under the MIT License, copyright 2022 by Archipelago Art
+Corporation.
+
+The output images are governed by the Creative Commons CC BY-NC 4.0 license.
