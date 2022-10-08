@@ -28,6 +28,18 @@ This repository has two main goodies:
     `renderData` shows that the "`fPaleYellow`" color was actually used in the
     output.
 
+## Installation
+
+This is a Node project. Install Node (e.g., with [Volta][]), clone this
+repository, then run `npm i` in the project directory to install dependencies.
+
+If this produces errors about installing `canvas`, you may need to [install
+dependencies for `canvas`][canvas-deps]. This is needed for some combinations
+of operating system, processor architecture, and Node version.
+
+[Volta]: https://volta.sh/
+[canvas-deps]: https://github.com/Automattic/node-canvas#compiling
+
 ## Licensing
 
 Only some of this code is permissively licensed. Please see `LICENSE` for
