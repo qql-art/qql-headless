@@ -5,10 +5,11 @@ const render = require("./render");
 const traitsLib = require("./vendor/qql-traits.min.js");
 
 async function main(args) {
-  const [outdir, seed = randomSeed(), extraArg] = args;
-  if (outdir == null || extraArg != null) {
-    throw new Error("usage: render <outdir> [<seed>]");
+  const [outdir, target, extraArg] = args;
+  if (outdir == null || target == null || extraArg != null) {
+    throw new Error("usage: render <outdir> { <seed> | <address> }");
   }
+  const seed = generateSeed(target);
   console.log("Seed:", seed);
   const traits = traitsLib.extractTraits(seed);
   console.log("Traits:", JSON.stringify(traits, null, 2));
@@ -22,12 +23,28 @@ async function main(args) {
   console.log("Image:", outfile);
 }
 
-function randomSeed() {
+function generateSeed(target) {
+  target = target.toLowerCase();
+  if (!target.match(/^0x[0-9a-f]*$/)) {
+    throw new Error("expected hex string; got: " + target);
+  }
+  const nibbles = target.slice(2);
+  if (nibbles.length === 40) return randomSeed(Buffer.from(nibbles, "hex"));
+  if (nibbles.length === 64) return target;
+  throw new Error(
+    "expected address (bytes20) or seed (bytes32); got: " + target
+  );
+}
+
+function randomSeed(address) {
+  if (!Buffer.isBuffer(address) || address.length !== 20)
+    throw new Error("expected address, got: " + address);
   const buf = Buffer.from(
     Array(32)
       .fill()
       .map(() => Math.random() * 256)
   );
+  address.copy(buf);
   // Set "version 1" to get proper spirals.
   const version = 1;
   buf[26] = buf[27] = 0xff; // version sentinel
