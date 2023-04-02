@@ -17,6 +17,10 @@ This repository has two main goodies:
     $ node src/index.js /tmp/myqqls 0xcccccccccccccccccccccccccccccccccccccccc
     ```
 
+    When generating random seeds for an address, you can fix values for some
+    traits by editing the `FIXED_TRAITS` object at the top of `src/index.js`.
+    (Set this to an empty object to allow all traits to vary.)
+
     Running `src/index.js` will write a PNG image file to the given output
     directory (which should already exist). The filename will have the current
     date and time as well as the seed.

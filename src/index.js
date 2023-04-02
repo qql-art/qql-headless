@@ -3,6 +3,12 @@ const path = require("path");
 
 const render = require("./render");
 const traitsLib = require("./vendor/qql-traits.min.js");
+const random = require("./vendor/qql-safe-random.min.js");
+
+const FIXED_TRAITS = {
+  margin: "Crisp",
+  ringSize: "Large",
+};
 
 async function main(args) {
   const [outdir, target, extraArg] = args;
@@ -29,14 +35,17 @@ function generateSeed(target) {
     throw new Error("expected hex string; got: " + target);
   }
   const nibbles = target.slice(2);
-  if (nibbles.length === 40) return randomSeed(Buffer.from(nibbles, "hex"));
+  if (nibbles.length === 40) {
+    const address = Buffer.from(nibbles, "hex");
+    return randomSeed(address, FIXED_TRAITS);
+  }
   if (nibbles.length === 64) return target;
   throw new Error(
     "expected address (bytes20) or seed (bytes32); got: " + target
   );
 }
 
-function randomSeed(address) {
+function randomSeed(address, traits) {
   if (!Buffer.isBuffer(address) || address.length !== 20)
     throw new Error("expected address, got: " + address);
   const buf = Buffer.from(
@@ -45,11 +54,12 @@ function randomSeed(address) {
       .map(() => Math.random() * 256)
   );
   address.copy(buf);
-  // Set "version 1" to get proper spirals.
-  const version = 1;
-  buf[26] = buf[27] = 0xff; // version sentinel
-  buf[28] = (buf[28] & 0x0f) | (version << 4);
-  return "0x" + buf.toString("hex");
+  const baseSeed = "0x" + buf.toString("hex");
+
+  const rng = random.makeUnseededRng();
+  const fullTraits = traitsLib.fillTraits(traits, rng);
+
+  return traitsLib.encodeTraits(baseSeed, fullTraits);
 }
 
 main(process.argv.slice(2)).catch((e) => {
