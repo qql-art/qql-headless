@@ -52,34 +52,61 @@ const FIXED_TRAITS = {
 }
 
 async function main(args) {
-  const [outdir, target, extraArg] = args;
+  let [outdir, target, count, extraArg] = args;
   if (outdir == null || target == null || extraArg != null) {
-    throw new Error("usage: render <outdir> { <seed> | <address> }");
+    throw new Error("usage: render <outdir> { <seed> | <address> } [<count>]");
   }
 
-  const seed = generateSeed(target);
-  console.log("Seed:", seed);
-  const traits = traitsLib.extractTraits(seed);
-  console.log("Traits:", JSON.stringify(traits, null, 2));
-
-  const { imageData, renderData } = await render({ seed, width: 2400 });
-  const basename = `${new Date().toISOString()}-${seed}.png`;
-  const outfile = path.join(outdir, basename);
+  if (count === null || count === undefined) {
+    count = 1;
+  } else {
+    count = parseInt(count);
+    if (count <= 0) {
+      throw new Error("count must be a positive integer");
+    }
+    if (count > 1 && isSeed(target)) {
+      throw new Error(`You requested ${count} renders, but provided a seed instead of an address`);
+    }
+  }
 
   if (!fs.existsSync(outdir)){
     fs.mkdirSync(outdir);
   }
 
-  await fs.promises.writeFile(outfile, imageData);
+  for (let i = 0; i < count; i++) {
+    if (i > 0) {
+      console.log("");
+    }
+    console.log(`======== Rendering ${i + 1} of ${count} ========`);
 
-  console.log("Render data:", JSON.stringify(renderData, null, 2));
-  console.log("Image:", outfile);
+    const seed = generateSeed(target);
+    console.log("Seed:", seed);
+    const traits = traitsLib.extractTraits(seed);
+    console.log("Traits:", JSON.stringify(traits, null, 2));
+
+    const { imageData, renderData } = await render({ seed, width: 2400 });
+    const basename = `${new Date().toISOString()}-${seed}.png`;
+    const outfile = path.join(outdir, basename);
+
+    await fs.promises.writeFile(outfile, imageData);
+
+    console.log("Render data:", JSON.stringify(renderData, null, 2));
+    console.log("Image:", outfile);
+  }
+}
+
+function isHex(target) {
+  return target.toLowerCase().match(/^0x[0-9a-f]*$/);
+}
+
+function isSeed(target) {
+  return target.length == 66 && isHex(target);
 }
 
 function generateSeed(target) {
   target = target.toLowerCase();
-  if (!target.match(/^0x[0-9a-f]*$/)) {
-    throw new Error("expected hex string; got: " + target);
+  if (!isHex(target))
+    throw new Error("expected hex string (like 0x123abc...); got: " + target);
   }
   const nibbles = target.slice(2);
   if (nibbles.length === 40) {
