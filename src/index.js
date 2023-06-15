@@ -51,7 +51,10 @@ const FIXED_TRAITS = {
   "ringThickness": null,
 }
 
-async function main(args) {
+// to generate smaller or larger images, change this
+const IMAGE_WIDTH = 2400;
+
+function parseArgs(args) {
   let [outdir, target, count, extraArg] = args;
   if (outdir == null || target == null || extraArg != null) {
     throw new Error("usage: render <outdir> { <seed> | <address> } [<count>]");
@@ -69,6 +72,28 @@ async function main(args) {
     }
   }
 
+  return {outdir, target, count};
+}
+
+async function renderOne(target, outdir) {
+  const seed = generateSeed(target);
+    console.log("Seed:", seed);
+    const traits = traitsLib.extractTraits(seed);
+    console.log("Traits:", JSON.stringify(traits, null, 2));
+
+    const { imageData, renderData } = await render({ seed, width: IMAGE_WIDTH });
+    const basename = `${new Date().toISOString()}-${seed}.png`;
+    const outfile = path.join(outdir, basename);
+
+    await fs.promises.writeFile(outfile, imageData);
+
+    console.log("Render data:", JSON.stringify(renderData, null, 2));
+    console.log("Image:", outfile);
+}
+
+async function main(args) {
+  const { outdir, target, count } = parseArgs(args);
+
   if (!fs.existsSync(outdir)){
     fs.mkdirSync(outdir);
   }
@@ -78,20 +103,7 @@ async function main(args) {
       console.log("");
     }
     console.log(`======== Rendering ${i + 1} of ${count} ========`);
-
-    const seed = generateSeed(target);
-    console.log("Seed:", seed);
-    const traits = traitsLib.extractTraits(seed);
-    console.log("Traits:", JSON.stringify(traits, null, 2));
-
-    const { imageData, renderData } = await render({ seed, width: 2400 });
-    const basename = `${new Date().toISOString()}-${seed}.png`;
-    const outfile = path.join(outdir, basename);
-
-    await fs.promises.writeFile(outfile, imageData);
-
-    console.log("Render data:", JSON.stringify(renderData, null, 2));
-    console.log("Image:", outfile);
+    await renderOne(target, outdir);
   }
 }
 
@@ -105,7 +117,7 @@ function isSeed(target) {
 
 function generateSeed(target) {
   target = target.toLowerCase();
-  if (!isHex(target))
+  if (!isHex(target)) {
     throw new Error("expected hex string (like 0x123abc...); got: " + target);
   }
   const nibbles = target.slice(2);
