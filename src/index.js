@@ -15,6 +15,7 @@ async function main(args) {
   if (outdir == null || target == null || extraArg != null) {
     throw new Error("usage: render <outdir> { <seed> | <address> }");
   }
+
   const seed = generateSeed(target);
   console.log("Seed:", seed);
   const traits = traitsLib.extractTraits(seed);
@@ -23,6 +24,11 @@ async function main(args) {
   const { imageData, renderData } = await render({ seed, width: 2400 });
   const basename = `${new Date().toISOString()}-${seed}.png`;
   const outfile = path.join(outdir, basename);
+
+  if (!fs.existsSync(outdir)){
+    fs.mkdirSync(outdir);
+  }
+
   await fs.promises.writeFile(outfile, imageData);
 
   console.log("Render data:", JSON.stringify(renderData, null, 2));
