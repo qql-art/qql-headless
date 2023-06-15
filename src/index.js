@@ -5,10 +5,51 @@ const render = require("./render");
 const traitsLib = require("./vendor/qql-traits.min.js");
 const random = require("./vendor/qql-safe-random.min.js");
 
+// Any of the QQL traits may be specified here. Any values
+// that are left null will be randomly chosen, just like the
+// randomization on qql.art.
+//
+// Note that this object has no effect when a specific seed
+// is generated.
 const FIXED_TRAITS = {
-  margin: "Crisp",
-  ringSize: "Large",
-};
+  // accepted values: ["Edinburgh", "Fidenza", "Austin", "Seoul", "Seattle", "Berlin", "Miami"]
+  "colorPalette": null,
+
+  // accepted values: ["Simple", "Stacked", "Zebra"]
+  "colorMode": null,
+
+  // accepted values: ["Low", "Medium", "High"]
+  "colorVariety": null,
+
+  // accepted values: ["Orbital", "Formation", "Shadows"]
+  "structure": null,
+
+  // accepted values: ["None", "Low", "High]
+  "turbulence": null,
+
+  // accepted values: ["Horizontal", "Vertical", "Diagonal", "Random Linear", "Explosive", "Spiral", "Circular", "Random Radial"]
+  "flowField": null,
+
+  // accepted values: ["None", "Crisp", "Wide]
+  "margin": null,
+
+  // accepted values: ["Small", "Medium", "Large"]
+  "ringSize": null,
+
+  // accepted values: ["Constant", "Variable", "Wild"]
+  "sizeVariety": null,
+
+  // accepted values: ["Dense", "Medium", "Sparse"]
+  "spacing": null,
+
+  // each of these can either be "On" or "Off"
+  "bullseyeRings1": null,
+  "bullseyeRings3": null,
+  "bullseyeRings7": null,
+
+  // accepted values: ["Thin", "Thick", "Mixed"]
+  "ringThickness": null,
+}
 
 async function main(args) {
   const [outdir, target, extraArg] = args;

@@ -63,7 +63,7 @@ control the seed.
 
 When generating random seeds for an address, you can fix values for some
 traits by editing the `FIXED_TRAITS` object at the top of `src/index.js`.
-Set this to an empty object to allow all traits to vary.
+See the comments in that file for instructions and documentation.
 
 ### The `render` Function
 
