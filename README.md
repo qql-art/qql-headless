@@ -6,7 +6,7 @@ This tool has a few advantages over the QQL website:
 
   - Better performance
 
-  - Easier to paralellize
+  - Easier to parallelize
 
   - Outputs can be managed with a filesystem
 
