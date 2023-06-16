@@ -1,36 +1,21 @@
 # qql-headless
 
-Render high-resolution QQL images from the comfort of your Node shell.
+Render high-resolution [QQL][] images from the comfort of your Node shell.
 
-This repository has two main goodies:
+This tool has a few advantages over the QQL website:
 
-  - `src/index.js` is a simple command-line client that can be used for one-off
-    renders of either specific seeds or random QQLs from a given address.
+  - Better performance
 
-    Usage:
+  - Easier to parallelize
 
-    ```
-    $ mkdir /tmp/myqqls
-    $ # Render a specific seed:
-    $ node src/index.js /tmp/myqqls 0x33c9371d25ce44a408f8a6473fbad86bf81e1a178c012cd49a85ffff14c54b46
-    $ # Render a random seed owned by your address:
-    $ node src/index.js /tmp/myqqls 0xcccccccccccccccccccccccccccccccccccccccc
-    ```
+  - Outputs can be managed with a filesystem
 
-    When generating random seeds for an address, you can fix values for some
-    traits by editing the `FIXED_TRAITS` object at the top of `src/index.js`.
-    (Set this to an empty object to allow all traits to vary.)
+  - Some additional filtering options are available
 
-    Running `src/index.js` will write a PNG image file to the given output
-    directory (which should already exist). The filename will have the current
-    date and time as well as the seed.
+The downside is that it requires some basic command-line and javascript
+skills.
 
-  - `src/render.js` exports a pure function `render` that takes a `seed` and a
-    `width`, and spits out a PNG image along with the "render data", which
-    contains emergent traits of the QQL. You can import this function and use
-    it for custom searches: for instance, keep rendering random QQLs until the
-    `renderData` shows that the "`fPaleYellow`" color was actually used in the
-    output.
+[QQL]: https://qql.art
 
 ## Installation
 
@@ -43,6 +28,51 @@ of operating system, processor architecture, and Node version.
 
 [Volta]: https://volta.sh/
 [canvas-deps]: https://github.com/Automattic/node-canvas#compiling
+
+## Usage
+
+The primary way of using this tool is to execute `src/index.js`.
+
+The pattern for rendering a specific seed is:
+
+```
+node src/index.js <outdir> <seed>
+```
+
+This will write a PNG image file to the given output directory. The
+filename will have the current date and time as well as the seed.
+
+For example, to render QQL #1 in the `./renders` dir:
+
+```bash
+node src/index.js ./renders 0x33c9371d25ce44a408f8a6473fbad86bf81e1a178c012cd49a85ffff14c54b46
+```
+
+Alternatively, you can render a random seed owned by your address
+by replacing the `<seed>` with your address (e.g.
+`0x33c9371d25ce44a408f8a6473fbad86bf81e1a17` for `1.tylerxhobbs.eth`):
+
+```bash
+node src/index.js ./renders 0x33c9371d25ce44a408f8a6473fbad86bf81e1a17
+```
+
+It's important to **use your address** here, otherwise you won't actually
+control the seed.
+
+### Rendering with Specific Traits
+
+When generating random seeds for an address, you can fix values for some
+traits by editing the `FIXED_TRAITS` object at the top of `src/index.js`.
+See the comments in that file for instructions and documentation.
+
+### The `render` Function
+
+`src/render.js` exports a pure function `render` that takes a `seed` and a
+`width`, and spits out a PNG image along with the "render data", which
+contains emergent traits of the QQL. You can import this function and use
+it for custom searches: for instance, keep rendering random QQLs until the
+`renderData` shows that the "`fPaleYellow`" color was actually used in the
+output.
 
 ## Licensing
 
