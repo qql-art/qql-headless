@@ -13,43 +13,43 @@ const random = require("./vendor/qql-safe-random.min.js");
 // is generated.
 const FIXED_TRAITS = {
   // accepted values: ["Edinburgh", "Fidenza", "Austin", "Seoul", "Seattle", "Berlin", "Miami"]
-  "colorPalette": null,
+  colorPalette: null,
 
   // accepted values: ["Simple", "Stacked", "Zebra"]
-  "colorMode": null,
+  colorMode: null,
 
   // accepted values: ["Low", "Medium", "High"]
-  "colorVariety": null,
+  colorVariety: null,
 
   // accepted values: ["Orbital", "Formation", "Shadows"]
-  "structure": null,
+  structure: null,
 
   // accepted values: ["None", "Low", "High]
-  "turbulence": null,
+  turbulence: null,
 
   // accepted values: ["Horizontal", "Vertical", "Diagonal", "Random Linear", "Explosive", "Spiral", "Circular", "Random Radial"]
-  "flowField": null,
+  flowField: null,
 
   // accepted values: ["None", "Crisp", "Wide]
-  "margin": null,
+  margin: null,
 
   // accepted values: ["Small", "Medium", "Large"]
-  "ringSize": null,
+  ringSize: null,
 
   // accepted values: ["Constant", "Variable", "Wild"]
-  "sizeVariety": null,
+  sizeVariety: null,
 
   // accepted values: ["Dense", "Medium", "Sparse"]
-  "spacing": null,
+  spacing: null,
 
   // each of these can either be "On" or "Off"
-  "bullseyeRings1": null,
-  "bullseyeRings3": null,
-  "bullseyeRings7": null,
+  bullseyeRings1: null,
+  bullseyeRings3: null,
+  bullseyeRings7: null,
 
   // accepted values: ["Thin", "Thick", "Mixed"]
-  "ringThickness": null,
-}
+  ringThickness: null,
+};
 
 // to generate smaller or larger images, change this
 const IMAGE_WIDTH = 2400;
@@ -68,33 +68,35 @@ function parseArgs(args) {
       throw new Error("count must be a positive integer");
     }
     if (count > 1 && isSeed(target)) {
-      throw new Error(`You requested ${count} renders, but provided a seed instead of an address`);
+      throw new Error(
+        `You requested ${count} renders, but provided a seed instead of an address`
+      );
     }
   }
 
-  return {outdir, target, count};
+  return { outdir, target, count };
 }
 
 async function renderOne(target, outdir) {
   const seed = generateSeed(target);
-    console.log("Seed:", seed);
-    const traits = traitsLib.extractTraits(seed);
-    console.log("Traits:", JSON.stringify(traits, null, 2));
+  console.log("Seed:", seed);
+  const traits = traitsLib.extractTraits(seed);
+  console.log("Traits:", JSON.stringify(traits, null, 2));
 
-    const { imageData, renderData } = await render({ seed, width: IMAGE_WIDTH });
-    const basename = `${new Date().toISOString()}-${seed}.png`;
-    const outfile = path.join(outdir, basename);
+  const { imageData, renderData } = await render({ seed, width: IMAGE_WIDTH });
+  const basename = `${new Date().toISOString()}-${seed}.png`;
+  const outfile = path.join(outdir, basename);
 
-    await fs.promises.writeFile(outfile, imageData);
+  await fs.promises.writeFile(outfile, imageData);
 
-    console.log("Render data:", JSON.stringify(renderData, null, 2));
-    console.log("Image:", outfile);
+  console.log("Render data:", JSON.stringify(renderData, null, 2));
+  console.log("Image:", outfile);
 }
 
 async function main(args) {
   const { outdir, target, count } = parseArgs(args);
 
-  if (!fs.existsSync(outdir)){
+  if (!fs.existsSync(outdir)) {
     fs.mkdirSync(outdir);
   }
 
